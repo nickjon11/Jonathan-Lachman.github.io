@@ -1592,3 +1592,27 @@ body.dark-mode .pentagon-menu-toggle:hover {background:#454545;}
 @media(max-width:900px) {
   #pentagon-window {width:98vw; height:calc(100vh - 48px); min-width:0;}
 }
+
+/* Pentagon Island desktop popups, outside the embedded game iframe. */
+#pentagon-desktop-popups { position:static; }
+.pentagon-floating { position:fixed; z-index:20000; max-height:calc(100vh - 16px); display:flex; flex-direction:column; overflow:hidden; background:#d4d0c8; color:#111; border:3px outset #fff; box-shadow:5px 6px 0 #0008; font:13px 'Courier New',monospace; }
+.pentagon-floating-bar { display:flex; justify-content:space-between; align-items:center; flex:0 0 auto; padding:5px 8px; background:#48317e; color:white; cursor:move; touch-action:none; }
+.pentagon-floating-bar button { cursor:pointer; background:#bcb7c6; color:#161020; border:2px outset #eee; padding:1px 7px; font:16px monospace; }
+.pentagon-floating-content { overflow:auto; padding:14px; flex:1; font:13px/1.65 'Courier New',monospace; }
+.pentagon-floating-content h2 { font-size:17px; margin:2px 0 12px; }
+.pentagon-floating-content p { margin:10px 0; }
+.pentagon-floating-footer { padding:3px 8px; border-top:2px inset #fff; font-size:10px; }
+.pentagon-floating .trade-columns { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.pentagon-floating .trade-columns h3, .pentagon-floating .trade-content h3 { font-size:12px; }
+.pentagon-floating .trade-resource { display:flex; justify-content:space-between; align-items:center; gap:4px; padding:4px; margin-bottom:4px; background:#eee; border:2px inset #fff; font-size:12px; }
+.pentagon-floating .trade-controls { display:flex; align-items:center; gap:4px; }
+.pentagon-floating .trade-controls button { min-width:25px; padding:2px 7px; }
+.pentagon-floating .trade-controls output { min-width:15px; text-align:center; }
+.pentagon-floating .trade-footer { display:flex; justify-content:flex-end; gap:8px; margin-top:10px; }
+.pentagon-floating .trade-footer button { padding:6px 10px; }
+.pentagon-floating #trade-counter { padding:9px; margin-top:12px; background:#eae7ee; border:2px inset #fff; }
+.pentagon-floating .hidden { display:none!important; }
+.pentagon-dark .pentagon-floating { background:#302b40; color:#f4f0fc; border-color:#776d8a; }
+.pentagon-dark .pentagon-floating-content { background:#242030; }
+.pentagon-dark .trade-resource, .pentagon-dark #trade-counter { background:#433b55!important; color:#fff; border-color:#776d8a!important; }
+@media(max-width:600px) { .pentagon-floating .trade-columns { gap:4px; } .pentagon-floating .trade-resource { font-size:10px; padding:2px; } }
