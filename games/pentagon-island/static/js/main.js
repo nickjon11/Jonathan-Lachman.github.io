@@ -108,6 +108,7 @@ function renderGame(room) {
   updateVictoryScreen(room);
   renderPlayers(room);
   renderInventory(room);
+  if(room.ai_trade_offer) showAiOffer(room.ai_trade_offer);
   renderTerrainBoard(room.board);
   renderBuildOverlay(room);
   $('current-player').textContent = room.current_player + (room.current_player===room.host?' (HOST)':'');
@@ -208,10 +209,10 @@ function renderBuildOverlay(room) {
     const [cx,cy]=V[i], owner=room.buildings['v'+i];
     const selectable = (buildMode==='settlement' || buildMode==='city') && valid.has('v'+i);
     const city = room.cities?.includes('v'+i);
-    const circle=svgEl('circle',{cx,cy,r:city?16:owner?12:10,'class':owner?'built-settlement':'build-vertex'+(selectable?' available':'')});
+    const circle=svgEl('circle',{cx,cy,r:city?16:owner?12:10,'class':owner?'built-settlement'+(selectable?' available':''):'build-vertex'+(selectable?' available':'')});
     if(owner) circle.setAttribute('fill',room.colors[owner]||'white');
     if(city) circle.setAttribute('stroke-width','5');
-    if(selectable) circle.addEventListener('click',()=>placeBuild(buildMode,'v'+i));
+    if(selectable) { circle.style.pointerEvents='all'; circle.style.cursor='pointer'; circle.setAttribute('stroke','#ffe75b'); circle.setAttribute('stroke-width','6'); circle.addEventListener('click',()=>placeBuild(buildMode,'v'+i)); }
     overlay.append(circle);
   }
   $('build-road').disabled=!myTurn || setup || !room.rolled || !(room.valid_builds?.road?.length);
@@ -225,7 +226,7 @@ function renderBuildOverlay(room) {
     : !myTurn ? `Waiting for ${room.current_player}'s turn.`
     : !room.rolled ? 'Roll the dice before building.'
     : buildMode ? `Click a highlighted ${buildMode==='road'?'edge':'intersection'} to build.`
-    : 'Select Build Road or Settlement to show legal spots.';
+    : 'Select Build Road, Settlement, or City to show legal spots.';
 }
 async function placeBuild(kind, location) {
   try { await request(`/api/rooms/${currentRoom}/build`,{token:playerToken,kind,location}); }
@@ -536,3 +537,14 @@ function describe(inv){return RESOURCE_LABELS.filter(([k])=>inv[k]>0).map(([k,,n
 $('trade-yes').onclick=async()=>{if(!pending)return;try{await request(`/api/rooms/${currentRoom}/trade-accept`,{token:playerToken,...pending});close()}catch(e){showError(e.message);$('trade-counter').classList.add('hidden');pending=null}};
 $('trade-no').onclick=close;
 })();
+
+/* AI-initiated offers, starting after seven consecutive AI turns without a road or settlement. */
+function showAiOffer(offer){
+const layer=document.getElementById('ai-offer-layer');if(!layer||!layer.classList.contains('hidden'))return;
+const describe=o=>RESOURCE_LABELS.filter(([k])=>o[k]>0).map(([k,,name])=>`${o[k]} ${name}`).join(', ');
+document.getElementById('ai-offer-text').textContent=`Computer 1 (AI) offers ${describe(offer.want)} in exchange for your ${describe(offer.give)}. Agree to Trade?`;
+layer.classList.remove('hidden');
+}
+async function answerAiOffer(accept){try{await request(`/api/rooms/${currentRoom}/ai-trade-respond`,{token:playerToken,accept});document.getElementById('ai-offer-layer').classList.add('hidden')}catch(e){showError(e.message)}}
+document.getElementById('ai-offer-yes')?.addEventListener('click',()=>answerAiOffer(true));
+document.getElementById('ai-offer-no')?.addEventListener('click',()=>answerAiOffer(false));
