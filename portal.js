@@ -90,16 +90,25 @@
     const sourceDialog = source.querySelector('.trade-dialog');
     const dest = win.querySelector('.pentagon-floating-content');
     // Keep the game's live controls and validation authoritative. Only mirror their view.
-    const markup = sourceDialog?.querySelector('.trade-content')?.innerHTML || '';
-    if (dest.innerHTML !== markup) {
-      dest.innerHTML = markup;
-      dest.querySelectorAll('button[id]').forEach(button => {
-        button.addEventListener('click', () => {
-          gameDoc.getElementById(button.id)?.click();
-          setTimeout(update, 0);
-        });
+    const sourceContent = sourceDialog?.querySelector('.trade-content');
+    if (!sourceContent) return;
+    const markup = sourceContent.innerHTML;
+    if (dest.innerHTML !== markup) dest.innerHTML = markup;
+    // Forward clicks by button position, including dynamically generated +/- buttons
+    // which have no IDs. Event delegation survives the DOM mirror refreshing.
+    if (!dest.dataset.tradeForwarding) {
+      dest.dataset.tradeForwarding = '1';
+      dest.addEventListener('click', event => {
+        const button = event.target.closest('button');
+        if (!button || button.disabled) return;
+        const localButtons = [...dest.querySelectorAll('button')];
+        const index = localButtons.indexOf(button);
+        const original = source.querySelectorAll('.trade-content button')[index];
+        if (original && !original.disabled) original.click();
+        queueUpdate();
       });
     }
+
   }
   let queued = false;
   function update() {

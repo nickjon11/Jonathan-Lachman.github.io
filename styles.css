@@ -1606,6 +1606,12 @@ body.dark-mode .pentagon-menu-toggle:hover {background:#454545;}
 .pentagon-floating .trade-columns h3, .pentagon-floating .trade-content h3 { font-size:12px; }
 .pentagon-floating .trade-resource { display:flex; justify-content:space-between; align-items:center; gap:4px; padding:4px; margin-bottom:4px; background:#eee; border:2px inset #fff; font-size:12px; }
 .pentagon-floating .trade-controls { display:flex; align-items:center; gap:4px; }
+.pentagon-floating .trade-content button { appearance:auto; background:#d4d0c8; color:#15121d; border:2px outset #f1eef4; border-radius:0; cursor:pointer; font:12px 'Courier New',monospace; }
+.pentagon-floating .trade-content button:disabled { opacity:.45; cursor:default; }
+.pentagon-floating .trade-content button:not(:disabled):active { border-style:inset; }
+.pentagon-floating .trade-resource>span { white-space:nowrap; }
+.pentagon-dark .pentagon-floating .trade-resource { background:#433b55; color:#fff; border-color:#776d8a; }
+.pentagon-dark .pentagon-floating #trade-counter { background:#433b55; color:#fff; border-color:#776d8a; }
 .pentagon-floating .trade-controls button { min-width:25px; padding:2px 7px; }
 .pentagon-floating .trade-controls output { min-width:15px; text-align:center; }
 .pentagon-floating .trade-footer { display:flex; justify-content:flex-end; gap:8px; margin-top:10px; }

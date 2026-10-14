@@ -54,6 +54,20 @@ function updateRoom(room) {
     $('player-list').append(entry);
   });
   (room.spectators||[]).forEach(name=>{ const entry=document.createElement('div');entry.className='player-entry';entry.textContent='◉ '+name+' [SPECTATOR]';$('player-list').append(entry); });
+  let lobbyAi = document.getElementById('lobby-ai-control');
+  if (!lobbyAi) {
+    lobbyAi = document.createElement('div'); lobbyAi.id='lobby-ai-control';lobbyAi.className='lobby-ai-control';
+    $('player-list').insertAdjacentElement('afterend',lobbyAi);
+  }
+  lobbyAi.replaceChildren();
+  if (!room.started && currentPlayer === room.host) {
+    const label=document.createElement('label');label.textContent='Add AI player: ';
+    const select=document.createElement('select');select.setAttribute('aria-label','Number of AI players');
+    for(let n=1;n<=3;n++){const option=document.createElement('option');option.value=n;option.textContent=n===1?'Computer 1 only':`Add Computer ${n} (${n+1} total players)`;select.append(option)}
+    select.value=String(room.ai_players.length);
+    select.onchange=async()=>{select.disabled=true;try{await request(`/api/rooms/${currentRoom}/set-ai-count`,{count:Number(select.value)})}catch(e){showError(e.message);select.disabled=false}};
+    label.append(select);lobbyAi.append(label);
+  }
   $('start-game').classList.toggle('hidden', currentPlayer !== room.host || room.started);
   $('game-end').classList.toggle('hidden', currentPlayer !== room.host);
   $('start-game').disabled = room.players.length < 2;
@@ -104,6 +118,33 @@ function renderPlayers(room) {
     row.append(status); body.append(row);
   });
 }
+let lastAnnouncedTurn = null;
+let turnNoticeTimer = null;
+function announceTurn(room) {
+  if (room.phase === 'finished') return;
+  const key = `${room.phase}|${room.current_player}|${room.phase==='setup'?room.setup_index:room.turn_number}`;
+  if (key === lastAnnouncedTurn) return;
+  lastAnnouncedTurn = key;
+  const existing = document.getElementById('turn-announcement');
+  if (existing) existing.remove();
+  if (turnNoticeTimer) clearTimeout(turnNoticeTimer);
+  const notice = document.createElement('section');
+  notice.id = 'turn-announcement';
+  notice.className = 'turn-announcement';
+  notice.setAttribute('role','status');
+  const phase = room.phase === 'setup' ? `Setup Phase · ${room.setup_step === 'road' ? 'Place Road' : 'Place Settlement'}` : 'Main Game';
+  notice.innerHTML = '<div class="help-titlebar"><strong>▣ CURRENT TURN</strong><button type="button" class="help-close" aria-label="Dismiss turn announcement">×</button></div><div class="turn-announcement-body"></div>';
+  const body = notice.querySelector('.turn-announcement-body');
+  for (const [label,value] of [['Player',room.current_player + (room.current_player===room.host?' (HOST)':'')],['Turn',String(room.turn_number)],['Phase',phase]]) {
+    const line = document.createElement('div');
+    const heading = document.createElement('strong');heading.textContent=label+': ';
+    line.append(heading,document.createTextNode(value));body.append(line);
+  }
+  document.body.append(notice);
+  const dismiss=()=>{if(notice.isConnected)notice.remove();};
+  notice.querySelector('button').onclick=dismiss;
+  turnNoticeTimer=setTimeout(dismiss,2600);
+}
 function renderGame(room) {
   updateVictoryScreen(room);
   renderPlayers(room);
@@ -112,13 +153,14 @@ function renderGame(room) {
   renderTerrainBoard(room.board);
   renderBuildOverlay(room);
   $('current-player').textContent = room.current_player + (room.current_player===room.host?' (HOST)':'');
-  $('turn-info').textContent = room.phase === 'setup' ? `Setup ${room.setup_index + 1}/ ${room.players.length * 2}` : `Turn ${room.turn_number}`;
+  $('turn-info').textContent = room.phase === 'setup' ? `Setup ${room.setup_index + 1}/${room.players.length * 2}` : `Turn ${room.turn_number}`;
+  announceTurn(room);
   $('dice-result').textContent = room.last_roll ? room.last_roll.join(' + ') : '⚄ ⚄';
   const myTurn = !isSpectator && room.current_player === currentPlayer;
   $('roll-dice').disabled = room.phase === 'setup' || !myTurn || room.rolled;
   $('end-turn').disabled = room.phase === 'setup' || !myTurn || !room.rolled;
   $('longest-road').textContent = room.road_owner || 'Not awarded';
-  $('largest-army').textContent = room.army_owner || 'Not awarded';
+  $('largest-army').textContent = 'Not Implemented for Demo';
   const log = $('game-log');
   const wasAtBottom = log.scrollTop + log.clientHeight >= log.scrollHeight - 25;
   log.replaceChildren();
@@ -290,11 +332,11 @@ function renderTerrainBoard(board) {
 const helpTopics = {
   intro: {title:'How to Play', html:`<h2>Getting Started</h2><p>Pentagon Island is a multiplayer island strategy game. Build settlements and roads, collect resources, and earn victory points.</p><ol><li>Create a room and share its six-character code.</li><li>Once everyone joins, the host starts the game.</li><li>During setup, place a settlement and its connecting road. Each player does this twice in snake order.</li><li>During normal turns, roll the dice, collect resources, build, then end your turn.</li></ol><p>Only legal construction locations are highlighted for the active player.</p>`},
   building: {title:'Building Rules', html:`<h2>Construction</h2><p><b>Road:</b> 1 Wood + 1 Brick. Connect it to your own road or settlement. Opposing roads may meet at empty intersections, but enemy settlements block extension through their vertices.</p><p><b>Settlement:</b> 1 Wood + 1 Brick + 1 Wheat + 1 Wool. Must connect to your road after setup. No settlement may be placed on a vertex directly adjacent to another settlement or city, regardless of owner.</p><p><b>City:</b> 2 Wheat + 3 Ore. Upgrade one of your own settlements; cities produce double resources and are worth 2 VP total.</p><p>The first two settlements and their connecting roads are free during setup.</p>`},
-  resources: {title:'Resources & Trading', html:`<h2>Resources</h2><p>Forest produces Wood; Hills produce Brick; Wheat fields produce Wheat; Pasture produces Wool; Mountains produce Ore. Desert produces nothing.</p><p>When a number is rolled, settlements touching tiles with that number collect 1 resource; cities collect 2. Your Inventory shows your private resource counts.</p><h3>Trading</h3><p><b>Coming soon:</b> player-to-player and bank/port trading are not yet available.</p>`},
+  resources: {title:'Resources & Trading', html:`<h2>Resources</h2><p>Forest produces Wood; Hills produce Brick; Wheat fields produce Wheat; Pasture produces Wool; Mountains produce Ore. Desert produces nothing.</p><p>When a number is rolled, settlements touching tiles with that number collect 1 resource; cities collect 2. Your Inventory shows your private resource counts.</p><h3>Trading with AI</h3><p>On your turn, roll the dice, then choose Trade. Use the + and − buttons to select resources you offer and request, and submit your proposal. An AI opponent may accept, reject, or suggest a counteroffer. Choose Yes to accept the counteroffer or No to decline; a declined trade closes automatically.</p><p>AI opponents may also offer a trade after seven of their own turns without building a road or settlement, if they have resources to exchange. You can accept or decline those offers. Bank and port trading are not implemented.</p>`},
   dice: {title:'Dice & Turns', html:`<h2>Taking a Turn</h2><ol><li>When your turn begins, roll two dice.</li><li>Matching terrain tiles produce resources for all eligible players.</li><li>Use your resources to build roads, settlements, or cities.</li><li>Choose End Turn to pass play to the next player.</li></ol><p>Rolling a 7 triggers resource discarding where applicable. <b>Coming soon:</b> interactive robber movement and stealing.</p>`},
-  victory: {title:'Victory Points', html:`<h2>Victory Points</h2><p>Players begin with 0 VP before setup.</p><ul><li>Settlement: 1 VP</li><li>City: 2 VP total (replaces the settlement's 1 VP)</li><li>Longest Road: 2 VP when implemented and awarded</li><li>Largest Army: 2 VP when implemented and awarded</li></ul><p>The full victory condition and special-card awards are still being developed. Follow the on-screen score for currently implemented scoring.</p>`},
+  victory: {title:'Victory Points', html:`<h2>Victory Points</h2><p>Players begin with 0 VP before setup.</p><ul><li>Settlement: 1 VP</li><li>City: 2 VP total (replaces the settlement's 1 VP)</li><li>Longest Road: 2 VP for a continuous road of at least 5 pieces</li><li>Largest Army: Not Implemented for Demo</li></ul><p>The first player to reach 10 VP wins. Longest Road requires at least 5 connected road pieces. A tied leader retains the award; Largest Army is not implemented in this demo.</p>`},
   controls: {title:'Controls', html:`<h2>Controls</h2><ul><li><b>Create Game:</b> enter a name to host a room.</li><li><b>Join Game:</b> enter your name and room code.</li><li><b>Roll Dice:</b> roll at the start of your normal turn.</li><li><b>Build Road / Settlement / City:</b> select the action, then click a highlighted legal position.</li><li><b>End Turn:</b> hand the turn to the next player.</li><li><b>View:</b> switch between light and dark themes.</li><li><b>Help:</b> open multiple draggable help windows.</li></ul><p>Drag a help window by its title bar. Use its close button to dismiss it.</p>`},
-  about: {title:'About Pentagon Island', html:`<h2>PENTAGON ISLAND</h2><p>Multiplayer Strategy Game</p><p><strong>Jonathan Lachman's Project: 2026</strong></p><p>Version 0.6.5</p><p>A browser-based multiplayer strategy game inspired by Catan, featuring randomized islands, resource collection, and settlement building.</p>`}
+  about: {title:'About Pentagon Island', html:`<h2>PENTAGON ISLAND</h2><p>Multiplayer Strategy Game</p><p><strong>Jonathan Lachman's Project: 2026</strong></p><p>Version 0.7.0 (four-player AI support)</p><p>A browser-based multiplayer strategy game inspired by Catan, featuring randomized islands, resource collection, and settlement building.</p>`}
 };
 const helpToggle = $('help-menu-toggle');
 const helpDropdown = $('help-dropdown');
@@ -443,7 +485,7 @@ function openLobbySettings() {
   for(const name of [...room.players,...(room.spectators||[])]) {
     const row=document.createElement('div');row.className='settings-member';
     const label=document.createElement('span');label.textContent=name+(name===room.host?' [HOST]':(room.spectators||[]).includes(name)?' [SPECTATOR]':'');row.append(label);
-    if(host && name!==room.host) {
+    if(host && name!==room.host && !room.started && room.ai_players.length>1) {
       const kick=document.createElement('button');kick.type='button';kick.textContent='Kick';
       kick.onclick=async()=>{
         const yes=await showConfirm('KICK MEMBER',`Remove ${name} from the room?`,[['No',false],['Yes',true]]);
@@ -453,6 +495,14 @@ function openLobbySettings() {
       };row.append(kick);
     }
     content.append(row);
+    if(name==='Computer 1 (AI)' && host && !room.started){
+      const label=document.createElement('label');label.className='ai-count-label';label.textContent='Add AI player: ';
+      const select=document.createElement('select');select.setAttribute('aria-label','AI opponents');
+      for(let n=1;n<=3;n++){const opt=document.createElement('option');opt.value=n;opt.textContent=n===1?'1 AI':`${n} AI (${n+1} total players)`;select.append(opt)}
+      select.value=String(room.ai_players.length);
+      select.onchange=async()=>{try{await request(`/api/rooms/${currentRoom}/set-ai-count`,{count:Number(select.value)});win.remove();openLobbySettings()}catch(e){showError(e.message)}};
+      label.append(select);content.append(label);
+    }
   }
   const board=document.createElement('h3');board.textContent='Board Settings';content.append(board);
   const reset=document.createElement('button');reset.textContent='Reset Board';reset.disabled=!host;
@@ -461,7 +511,7 @@ function openLobbySettings() {
     if(!yes)return;
     try{showConnection('Resetting and synchronizing island...');await request(`/api/rooms/${currentRoom}/reset`,{token:playerToken});win.remove();}catch(e){hideConnection();showError(e.message);}
   };content.append(reset);
-  const expansion=document.createElement('p');expansion.textContent='5–6 Player Expansion: Coming later';content.append(expansion);
+
   $('help-window-layer').append(win);
   win.querySelector('.help-close').onclick=()=>win.remove();
   win.addEventListener('pointerdown',()=>win.style.zIndex=String(++helpTopZ));
@@ -532,7 +582,7 @@ const layer=$('trade-layer'),give={},want={};let pending=null;
 const clean=()=>{for(const [key] of RESOURCE_LABELS){give[key]=0;want[key]=0}pending=null;$('trade-counter').classList.add('hidden');$('trade-message').textContent='Choose what to give and what to request.';draw()};
 function draw(){for(const [side,values] of [['trade-give',give],['trade-want',want]]){const target=$(side);target.replaceChildren();for(const [key,icon,name] of RESOURCE_LABELS){const row=document.createElement('div');row.className='trade-resource';const title=document.createElement('span');title.textContent=icon+' '+name;const controls=document.createElement('div');controls.className='trade-controls';const minus=document.createElement('button'),plus=document.createElement('button'),num=document.createElement('output');minus.type=plus.type='button';minus.textContent='−';plus.textContent='+';num.textContent=values[key];const limit=side==='trade-give'?Number(latestRoom?.my_inventory?.[key]||0):99;minus.disabled=values[key]===0;plus.disabled=values[key]>=limit;minus.onclick=()=>{values[key]--;pending=null;$('trade-counter').classList.add('hidden');draw()};plus.onclick=()=>{values[key]++;pending=null;$('trade-counter').classList.add('hidden');draw()};controls.append(minus,num,plus);row.append(title,controls);target.append(row)}}}
 const close=()=>{layer.classList.add('hidden');pending=null};$('trade-open').onclick=()=>{if(!latestRoom||latestRoom.phase!=='play'||latestRoom.current_player!==currentPlayer||!latestRoom.rolled||latestRoom.winner){showNotice('TRADE UNAVAILABLE','You can trade after rolling the dice on your turn.');return}clean();layer.classList.remove('hidden')};$('trade-close').onclick=close;layer.addEventListener('click',e=>{if(e.target===layer)close()});$('trade-reset').onclick=clean;
-$('trade-propose').onclick=async()=>{try{const response=await request(`/api/rooms/${currentRoom}/trade-propose`,{token:playerToken,give,want});if(response.unavailable){close();showNotice('TRADE DECLINED',response.message);return}pending={give:response.give,want:response.want};$('trade-counter-message').textContent=response.message;$('trade-counter-details').textContent='You give: '+describe(pending.give)+'  |  You receive: '+describe(pending.want);$('trade-counter').classList.remove('hidden')}catch(e){showError(e.message)}};
+$('trade-propose').onclick=async()=>{try{const response=await request(`/api/rooms/${currentRoom}/trade-propose`,{token:playerToken,give,want});if(response.unavailable){close();showNotice('TRADE DECLINED',response.message);return}pending={give:response.give,want:response.want,ai_player:response.ai_player};$('trade-counter-message').textContent=response.message;$('trade-counter-details').textContent='You give: '+describe(pending.give)+'  |  You receive: '+describe(pending.want);$('trade-counter').classList.remove('hidden')}catch(e){showError(e.message)}};
 function describe(inv){return RESOURCE_LABELS.filter(([k])=>inv[k]>0).map(([k,,name])=>`${inv[k]} ${name}`).join(', ')||'Nothing'}
 $('trade-yes').onclick=async()=>{if(!pending)return;try{await request(`/api/rooms/${currentRoom}/trade-accept`,{token:playerToken,...pending});close()}catch(e){showError(e.message);$('trade-counter').classList.add('hidden');pending=null}};
 $('trade-no').onclick=close;
@@ -542,7 +592,7 @@ $('trade-no').onclick=close;
 function showAiOffer(offer){
 const layer=document.getElementById('ai-offer-layer');if(!layer||!layer.classList.contains('hidden'))return;
 const describe=o=>RESOURCE_LABELS.filter(([k])=>o[k]>0).map(([k,,name])=>`${o[k]} ${name}`).join(', ');
-document.getElementById('ai-offer-text').textContent=`Computer 1 (AI) offers ${describe(offer.want)} in exchange for your ${describe(offer.give)}. Agree to Trade?`;
+document.getElementById('ai-offer-text').textContent=`${offer.ai_player||'Computer 1 (AI)'} offers ${describe(offer.want)} in exchange for your ${describe(offer.give)}. Agree to Trade?`;
 layer.classList.remove('hidden');
 }
 async function answerAiOffer(accept){try{await request(`/api/rooms/${currentRoom}/ai-trade-respond`,{token:playerToken,accept});document.getElementById('ai-offer-layer').classList.add('hidden')}catch(e){showError(e.message)}}

@@ -307,3 +307,19 @@ body.portfolio-embedded .game-columns { grid-template-columns: minmax(0,1.55fr) 
 
 /* Allow existing settlements to be selected for city upgrades. */
 .build-overlay .built-settlement.available{pointer-events:all;cursor:pointer;stroke:#ffe75b;stroke-width:6;filter:drop-shadow(0 0 5px #ffe75b)}
+
+/* v0.7.0: accessible turn details and lobby opponent selector */
+.turn-dropdown{margin-top:8px;font-size:11px;max-width:270px}
+.turn-dropdown summary{cursor:pointer;color:inherit;user-select:none}
+.turn-dropdown>div{padding:7px;margin-top:4px;border:1px solid #777;line-height:1.5}
+.ai-count-label{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 12px;font-size:12px}
+.ai-count-label select{padding:6px;background:#eee;color:#111;border:2px inset #aaa;font:inherit;max-width:100%}
+
+/* v0.7.0: short-lived turn window and inline lobby AI controls */
+.turn-announcement{position:fixed;z-index:2147482000;left:50%;top:18%;transform:translateX(-50%);width:min(420px,calc(100vw - 24px));background:#252033;color:#fff;border:3px ridge #9183a8;box-shadow:5px 6px 0 #090711;font-size:13px;pointer-events:auto}
+.turn-announcement .help-titlebar{display:flex;align-items:center;justify-content:space-between;background:#442777;color:#fff;padding:8px 10px}
+.turn-announcement-body{padding:18px 20px;line-height:2}
+.turn-announcement-body strong{color:#fff}
+.lobby-ai-control{padding:10px 12px;background:#302b40;color:#fff;font-size:12px;text-align:left}
+.lobby-ai-control select,.ai-count-label select{margin-left:8px;padding:5px;background:#f3efff;color:#21152f;max-width:100%;font-size:12px}
+.ai-count-label{display:block;margin:10px 0 16px}
