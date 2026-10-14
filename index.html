@@ -7,7 +7,7 @@
 
     <title>Jonathan Lachman</title>
 
-    <link rel="stylesheet" href="styles.css?v=4">
+    <link rel="stylesheet" href="styles.css?v=10">
 </head>
 
 <body>
@@ -428,15 +428,56 @@
 
                 </button>
 
+                <button class="file-icon" data-window="pentagon-window">
+                    <span>🎮</span><span>Pentagon Island.exe</span>
+                </button>
+
             </div>
 
 
             <div class="status-bar">
-                3 object(s)
+                4 object(s)
             </div>
 
         </section>
 
+
+
+        <!-- PENTAGON ISLAND: ORIGINAL ARTWORK BROWSER DEMO -->
+        <section class="window pentagon-window" id="pentagon-window" data-title="Pentagon Island.exe" style="top: 55px; left: 135px;">
+            <div class="window-titlebar"><div class="window-title"><span>🎮</span><span>Pentagon Island.exe — Single-Player Demo</span></div>
+                <div class="window-controls"><button class="minimize-button" aria-label="Minimize">_</button><button class="maximize-button" aria-label="Maximize">□</button><button class="close-button" aria-label="Close">×</button></div>
+            </div>
+            <div class="pentagon-toolbar">
+                <div class="pentagon-menu-group"><button type="button" class="pentagon-menu-toggle" data-pentagon-menu="game" aria-expanded="false">Game ▾</button>
+                  <div class="pentagon-menu-popup" id="pentagon-game-menu" hidden>
+                    <button type="button" data-pentagon-game="game-leave">Leave Game</button>
+                    <button type="button" data-pentagon-game="game-end">End Session (Host)</button>
+                  </div></div>
+                <div class="pentagon-menu-group"><button type="button" class="pentagon-menu-toggle" data-pentagon-menu="multiplayer" aria-expanded="false">Multiplayer ▾</button>
+                  <div class="pentagon-menu-popup" id="pentagon-multiplayer-menu" hidden>
+                    <button type="button" data-pentagon-game="lobby-settings-open">Lobby Settings...</button>
+                  </div></div>
+                <div class="pentagon-menu-group"><button type="button" class="pentagon-menu-toggle" data-pentagon-menu="view" aria-expanded="false">View ▾</button>
+                  <div class="pentagon-menu-popup" id="pentagon-view-menu" hidden>
+                    <button type="button" data-pentagon-action="light">☀ Light Theme</button>
+                    <button type="button" data-pentagon-action="dark">☾ Dark Theme</button>
+</div></div>
+                <div class="pentagon-menu-group"><button type="button" class="pentagon-menu-toggle" data-pentagon-menu="help" aria-expanded="false">Help ▾</button>
+                  <div class="pentagon-menu-popup" id="pentagon-help-menu" hidden>
+                    <button type="button" data-pentagon-help="intro">How to Play</button>
+                    <button type="button" data-pentagon-help="building">Building Rules</button>
+                    <button type="button" data-pentagon-help="resources">Resources &amp; Trading</button>
+                    <button type="button" data-pentagon-help="dice">Dice &amp; Turns</button>
+                    <button type="button" data-pentagon-help="victory">Victory Points</button>
+                    <button type="button" data-pentagon-help="controls">Controls</button>
+                    <button type="button" data-pentagon-help="about">About Pentagon Island</button>
+                  </div></div>
+                <a href="games/pentagon-island/index.html" target="_blank" rel="noopener">Open in new tab ↗</a>
+            </div>
+            <div class="pentagon-viewport"><iframe title="Pentagon Island interactive single-player demo" src="games/pentagon-island/index.html?embedded=1&demo=092" loading="lazy"></iframe></div>
+            <div class="status-bar pentagon-status"><span>Single-player browser adaptation · No backend required</span><span>Original artwork · v0.6.9.1 source-based demo</span></div>
+        </section>
 
         <!-- =================================================
              RESUME
@@ -993,8 +1034,78 @@
     </footer>
 
 
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=10"></script>
 
+<script>
+(function () {
+  const windowEl = document.getElementById('pentagon-window');
+  if (!windowEl) return;
+  const iframe = windowEl.querySelector('iframe');
+  const menus = Object.fromEntries(['game','multiplayer','view','help'].map(
+    name => [name, document.getElementById('pentagon-' + name + '-menu')]
+  ));
+  const toggles = windowEl.querySelectorAll('[data-pentagon-menu]');
+  const closeMenus = () => {
+    Object.values(menus).forEach(menu => { menu.hidden = true; });
+    toggles.forEach(button => button.setAttribute('aria-expanded', 'false'));
+  };
+  toggles.forEach(button => button.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    const name = button.dataset.pentagonMenu;
+    const shouldOpen = menus[name].hidden;
+    closeMenus();
+    menus[name].hidden = !shouldOpen;
+    button.setAttribute('aria-expanded', String(shouldOpen));
+  }));
+  // Keep the portfolio dropdown open long enough for its option to be clicked.
+  windowEl.querySelectorAll('.pentagon-menu-popup').forEach(menu => {
+    menu.addEventListener('click', event => event.stopPropagation());
+    menu.addEventListener('mousedown', event => event.stopPropagation());
+  });
+  // The portfolio and game are served from the same origin. Use the game’s
+  // real controls directly, rather than depending only on postMessage.
+  function send(command, value) {
+    try {
+      const doc = iframe.contentDocument;
+      if (!doc || doc.readyState === 'loading') return;
+      let target = null;
+      if (command === 'theme') target = doc.getElementById('theme-' + value);
+      if (command === 'game') target = doc.getElementById(value);
+      if (command === 'help') target = [...doc.querySelectorAll('[data-help]')]
+        .find(element => element.dataset.help === value);
+      if (command === 'scale') {
+        const factor = Number(value) / 100;
+        doc.documentElement.style.zoom = String(factor);
+        doc.documentElement.style.width = (100 / factor) + '%';
+        doc.documentElement.style.minHeight = (100 / factor) + '%';
+        doc.body.style.width = '100%';
+      } else if (target) {
+        target.click();
+      }
+    } catch (error) {
+      console.warn('Pentagon Island toolbar action failed:', error);
+    }
+    closeMenus();
+  }
+  windowEl.querySelectorAll('[data-pentagon-action]').forEach(button =>
+    button.addEventListener('click', () => send('theme', button.dataset.pentagonAction))
+  );
+  windowEl.querySelectorAll('[data-pentagon-help]').forEach(button =>
+    button.addEventListener('click', () => send('help', button.dataset.pentagonHelp))
+  );
+  windowEl.querySelectorAll('[data-pentagon-game]').forEach(button =>
+    button.addEventListener('click', () => send('game', button.dataset.pentagonGame))
+  );
+
+  document.addEventListener('click', event => {
+    if (!event.target.closest('#pentagon-window .pentagon-menu-group')) closeMenus();
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeMenus();
+  });
+})();
+</script>
 </body>
 
 </html>

@@ -64,7 +64,7 @@ function createTaskbarButton(windowElement) {
 
         if (windowElement.style.display === "none") {
 
-            windowElement.style.display = "block";
+            windowElement.style.display = windowElement.id === "pentagon-window" ? "flex" : "block";
 
             activateWindow(windowElement);
 
@@ -74,7 +74,7 @@ function createTaskbarButton(windowElement) {
 
         } else {
 
-            windowElement.style.display = "block";
+            windowElement.style.display = windowElement.id === "pentagon-window" ? "flex" : "block";
 
             activateWindow(windowElement);
         }
@@ -95,7 +95,7 @@ function openWindow(windowElement) {
         return;
     }
 
-    windowElement.style.display = "block";
+    windowElement.style.display = windowElement.id === "pentagon-window" ? "flex" : "block";
 
     createTaskbarButton(windowElement);
 

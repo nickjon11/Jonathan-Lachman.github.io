@@ -1505,3 +1505,90 @@ body.dark-mode .resume-fallback {
         min-width: 140px;
     }
 }
+/* Pentagon Island game viewer: preserves original embedded game artwork */
+.pentagon-window{width:min(1180px,96vw);height:min(850px,89vh);display:none;flex-direction:column;min-width:300px}
+.pentagon-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 11px;background:#c0c0c0;border-bottom:1px solid #888;font-size:12px;flex-shrink:0}
+.pentagon-toolbar a{color:#663399;font-weight:bold}
+.pentagon-viewport{flex:1;min-height:0;overflow:hidden;background:#10101a}
+.pentagon-viewport iframe{display:block;width:100%;height:100%;border:0}
+.pentagon-window>.status-bar{flex-shrink:0}
+body.dark-mode .pentagon-toolbar{background:#282828;color:#eee}body.dark-mode .pentagon-toolbar a{color:#d5baff}
+@media(max-width:700px){.pentagon-window{width:96vw;height:84vh;left:2vw!important;min-width:0}.pentagon-toolbar{font-size:10px}}
+
+/* Pentagon Island: override default block window layout; JS opens this as flex */
+.pentagon-window{box-sizing:border-box;display:none;flex-direction:column;overflow:hidden}
+.pentagon-window>.window-titlebar{flex:0 0 26px}
+.pentagon-window>.pentagon-toolbar{flex:0 0 auto}
+.pentagon-window>.pentagon-viewport{flex:1 1 0%;height:0;min-height:0;min-width:0;overflow:hidden}
+.pentagon-window>.pentagon-viewport>iframe{display:block;width:100%;height:100%;border:0}
+.pentagon-window>.status-bar{flex:0 0 auto}
+
+/* Pentagon portfolio controls: menu left, artwork right, link far right */
+.pentagon-toolbar {justify-content:flex-start; gap:10px; position:relative; z-index:4; overflow:visible;}
+.pentagon-menu-group {position:relative; flex-shrink:0;}
+.pentagon-menu-toggle {font:inherit; color:inherit; border:0; background:transparent; padding:3px 5px; cursor:pointer;}
+.pentagon-menu-toggle:hover,.pentagon-menu-toggle[aria-expanded="true"] {background:#dedede;}
+.pentagon-artwork-label {white-space:nowrap; margin-left:12px;}
+.pentagon-toolbar > a {margin-left:auto; white-space:nowrap;}
+.pentagon-menu-popup {position:absolute; top:100%; left:0; min-width:175px; padding:4px; background:#c0c0c0; border:2px outset #fff; box-shadow:2px 3px 3px #0005; z-index:999;}
+.pentagon-menu-popup[hidden] {display:none;}
+.pentagon-menu-popup button {display:block; width:100%; text-align:left; background:transparent; border:0; padding:7px 9px; color:#111; font:inherit; cursor:pointer;}
+.pentagon-menu-popup button:hover {background:#663399; color:white;}
+body.dark-mode .pentagon-menu-popup {background:#303030; border-color:#666;}
+body.dark-mode .pentagon-menu-popup button {color:white;}
+body.dark-mode .pentagon-menu-toggle:hover {background:#454545;}
+@media(max-width:700px){.pentagon-toolbar{gap:4px;flex-wrap:wrap}.pentagon-artwork-label{margin-left:0;white-space:normal}}
+
+/* Unified Pentagon Island toolbar and status line */
+.pentagon-toolbar {gap:8px; flex-wrap:nowrap;}
+.pentagon-toolbar > a {margin-left:auto;}
+.pentagon-status {display:flex; justify-content:space-between; align-items:center; gap:12px;}
+.pentagon-status > span:last-child {margin-left:auto; text-align:right;}
+@media(max-width:700px){.pentagon-toolbar{gap:1px; flex-wrap:wrap;}.pentagon-menu-toggle{padding:4px!important;}.pentagon-status{font-size:10px;flex-wrap:wrap;}}
+
+/* v0.6.9.2 portfolio demo menu: ensure dropdowns overlay the embedded iframe */
+.pentagon-window { overflow: visible; }
+.pentagon-toolbar { position: relative; z-index: 100; overflow: visible; }
+.pentagon-menu-group { position: relative; }
+.pentagon-menu-popup { z-index: 1000; max-height: min(65vh, 420px); overflow-y: auto; }
+.pentagon-menu-popup[hidden] { display: none !important; }
+.pentagon-viewport { position: relative; z-index: 1; overflow: hidden; }
+.pentagon-menu-divider { height: 1px; background: #8d8d8d; margin: 5px 3px; }
+.pentagon-menu-label { padding: 5px 9px 3px; font-weight: bold; font-size: 11px; }
+
+/* Pentagon Island: large, viewport-safe portfolio window; no zoom scaling. */
+#pentagon-window {
+  width: min(1450px, 98vw);
+  height: min(960px, calc(100vh - 48px));
+  max-width: 98vw;
+  max-height: calc(100vh - 48px);
+  box-sizing: border-box;
+  display: none;
+  flex-direction: column;
+  overflow: visible;
+}
+#pentagon-window > .window-titlebar,
+#pentagon-window > .pentagon-toolbar,
+#pentagon-window > .status-bar { flex: 0 0 auto; }
+#pentagon-window > .pentagon-viewport {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+#pentagon-window > .pentagon-viewport > iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+#pentagon-window.maximized {
+  width: 100vw !important;
+  height: calc(100vh - 40px) !important;
+  max-width: none;
+  max-height: none;
+}
+@media(max-width:900px) {
+  #pentagon-window {width:98vw; height:calc(100vh - 48px); min-width:0;}
+}
