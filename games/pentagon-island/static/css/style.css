@@ -323,3 +323,16 @@ body.portfolio-embedded .game-columns { grid-template-columns: minmax(0,1.55fr) 
 .lobby-ai-control{padding:10px 12px;background:#302b40;color:#fff;font-size:12px;text-align:left}
 .lobby-ai-control select,.ai-count-label select{margin-left:8px;padding:5px;background:#f3efff;color:#21152f;max-width:100%;font-size:12px}
 .ai-count-label{display:block;margin:10px 0 16px}
+
+/* v0.8.0 controls */
+.trade-opponent-label,.ai-difficulty-label{display:block;margin:8px 0;font-weight:bold}.trade-opponent-label select,.ai-difficulty-label select{margin-left:8px;padding:5px;max-width:100%;background:var(--panel,#eee);color:inherit;border:2px inset #aaa}.robber-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;max-height:250px;overflow:auto}.robber-tiles button{font-size:12px;padding:6px}.robber-tiles button.selected{outline:3px solid #a06af1}.robber-dialog{max-width:590px}.robber-marker{font-size:37px;fill:#17111f;stroke:white;stroke-width:1.2;paint-order:stroke;pointer-events:none}.knight-count{font-size:11px;text-align:center;padding:3px}.actions button{min-width:0}
+
+/* v0.8.1: keep new settings consistent with the existing retro UI. */
+.lobby-ai-control, .lobby-ai-control label, .lobby-ai-control select,
+.ai-count-label, .ai-count-label select, .ai-difficulty-label,
+.ai-difficulty-label select, .trade-opponent-label select {font-family:'Courier New',Courier,monospace!important;}
+.lobby-ai-control select, .ai-difficulty-label select, .ai-count-label select,
+.trade-opponent-label select {color:#111!important;background:#f3efff!important;}
+.lobby-ai-control {display:flex;flex-direction:column;gap:6px;}
+.lobby-ai-control label {display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
+.lobby-ai-control label select {margin-left:0;}

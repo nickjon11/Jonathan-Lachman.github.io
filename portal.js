@@ -94,6 +94,8 @@
     if (!sourceContent) return;
     const markup = sourceContent.innerHTML;
     if (dest.innerHTML !== markup) dest.innerHTML = markup;
+    win.querySelector('.pentagon-floating-bar strong').textContent=title;
+    if(!dest.dataset.selectForwarding){dest.dataset.selectForwarding='1';dest.addEventListener('change',event=>{const control=event.target.closest('select');if(!control)return;const index=[...dest.querySelectorAll('select')].indexOf(control);const original=source.querySelectorAll('.trade-content select')[index];if(original){original.value=control.value;original.dispatchEvent(new Event('change',{bubbles:true}));queueUpdate()}})}
     // Forward clicks by button position, including dynamically generated +/- buttons
     // which have no IDs. Event delegation survives the DOM mirror refreshing.
     if (!dest.dataset.tradeForwarding) {
@@ -114,7 +116,7 @@
   function update() {
     if (!gameDoc) return;
     copyHelp();
-    syncLayer('trade-layer', '↔ TRADE WITH COMPUTER 1 (AI)', 620);
+    syncLayer('trade-layer', gameDoc.getElementById('trade-title')?.textContent||'↔ TRADE WITH AI', 620);
     syncLayer('ai-offer-layer', '↔ COMPUTER 1 (AI) OFFERS A TRADE', 540);
   }
   function queueUpdate() {
