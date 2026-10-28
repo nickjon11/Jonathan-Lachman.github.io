@@ -7,7 +7,7 @@
 
     <title>Jonathan Lachman</title>
 
-    <link rel="stylesheet" href="styles.css?v=10">
+    <link rel="stylesheet" href="styles.css?v=0851">
 </head>
 
 <body>
@@ -40,7 +40,6 @@
             <span class="desktop-icon-image">📄</span>
             <span>Resume</span>
         </button>
-
 
         <!-- =================================================
              ABOUT ME
@@ -253,7 +252,7 @@
 
 
             <div class="status-bar">
-                About Jonathan Lachman: Last Updated 10-05-2026
+                About Jonathan Lachman: Last Updated 10-28-2026
             </div>
 
         </section>
@@ -428,6 +427,8 @@
 
                 </button>
 
+                <button class="file-icon" data-window="sftp-window"><span>🗄️</span><span>SFTP Manager.exe</span></button>
+                <button class="file-icon" data-window="luclid-window"><span>🤖</span><span>Luclid-ii.exe</span></button>
                 <button class="file-icon" data-window="pentagon-window">
                     <span>🎮</span><span>Pentagon Island.exe</span>
                 </button>
@@ -436,14 +437,23 @@
 
 
             <div class="status-bar">
-                4 object(s)
+                6 object(s)
             </div>
 
         </section>
 
 
 
-        <!-- PENTAGON ISLAND: ORIGINAL ARTWORK BROWSER DEMO -->
+        <section class="window sftp-window" id="sftp-window" data-title="SFTP Manager.exe" style="top:65px;left:120px;width:1020px;height:710px;max-width:92vw;max-height:85vh;">
+          <div class="window-titlebar"><div class="window-title"><span>🗄️</span><span>SFTP Manager.exe — Web Demo</span></div><div class="window-controls"><button class="minimize-button" aria-label="Minimize">_</button><button class="maximize-button" aria-label="Maximize">□</button><button class="close-button" aria-label="Close">×</button></div></div>
+          <div class="app-frame-wrap"><iframe title="SFTP Manager interactive browser demonstration" src="apps/sftp-manager/index.html" loading="lazy"></iframe></div>
+        </section>
+
+        <section class="window luclid-window" id="luclid-window" data-title="Luclid-ii.exe" style="top: 72px; left: 170px; width: 920px; max-width: 92vw; height: 670px; max-height: 82vh;">
+<div class="window-titlebar"><div class="window-title"><img src="apps/luclid-ii/lii_icon.png" alt="" style="width:19px;height:19px;vertical-align:middle"><span>Luclid-ii.exe — Web Demo</span></div><div class="window-controls"><button class="minimize-button" aria-label="Minimize">_</button><button class="maximize-button" aria-label="Maximize">□</button><button class="close-button" aria-label="Close">×</button></div></div>
+<div class="app-frame-wrap" style="height:calc(100% - 31px);min-height:0"><iframe title="Luclid-ii interactive web demo" src="apps/luclid-ii/index.html" loading="lazy" style="width:100%;height:100%;border:0"></iframe></div></section>
+
+<!-- PENTAGON ISLAND: ORIGINAL ARTWORK BROWSER DEMO -->
         <section class="window pentagon-window" id="pentagon-window" data-title="Pentagon Island.exe" style="top: 55px; left: 135px;">
             <div class="window-titlebar"><div class="window-title"><span>🎮</span><span>Pentagon Island.exe — Single-Player Demo</span></div>
                 <div class="window-controls"><button class="minimize-button" aria-label="Minimize">_</button><button class="maximize-button" aria-label="Maximize">□</button><button class="close-button" aria-label="Close">×</button></div>
@@ -472,6 +482,7 @@
                     <button type="button" data-pentagon-help="victory">Victory Points</button>
                     <button type="button" data-pentagon-help="controls">Controls</button>
                     <button type="button" data-pentagon-help="about">About Pentagon Island</button>
+                    <button type="button" class="project-repo-lookup" data-project="Pentagon Island">Find Full Project on GitHub ↗</button>
                   </div></div>
                 <a href="games/pentagon-island/index.html" target="_blank" rel="noopener">Open in new tab ↗</a>
             </div>
@@ -998,6 +1009,28 @@
     </div>
 
 
+
+    <!-- Desktop-only retro sidebar widgets -->
+    <aside class="retro-widget-stack" id="retro-widgets" aria-label="Desktop widgets">
+      <section class="retro-widget winamp-widget" aria-label="Now playing">
+        <div class="retro-widget-title"><span>♫ LUCLID AUDIO PLAYER</span><button class="widget-collapse" aria-label="Collapse audio player" aria-expanded="true">−</button></div>
+        <div class="retro-widget-body winamp-body">
+          <div class="winamp-screen">
+            <div class="winamp-time" id="widget-time">00:00</div>
+            <div class="winamp-display"><div class="winamp-song" id="widget-song">READY · CHOOSE AUDIO</div><div class="winamp-subline" id="widget-audio-status">LOCAL FILES / INTERNET RADIO</div><div class="winamp-visual" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+          </div>
+          <input type="range" id="widget-audio-progress" min="0" max="100" value="0" aria-label="Playback progress" disabled>
+          <div class="winamp-controls"><button id="widget-audio-prev" title="Previous track" aria-label="Previous track">⏮</button><button id="widget-audio-toggle" title="Play or pause" aria-label="Play or pause">▶</button><button id="widget-audio-stop" title="Stop" aria-label="Stop">■</button><button id="widget-audio-next" title="Next track" aria-label="Next track">⏭</button><label class="winamp-volume">VOL <input type="range" id="widget-volume" min="0" max="100" value="75" aria-label="Volume"></label></div>
+          <div class="winamp-source"><input type="file" id="widget-audio-file" accept="audio/*,.mp3,.ogg,.wav,.m4a,.flac" multiple hidden><button id="widget-pick-audio">+ FILES</button><button id="widget-open-radio">+ RADIO</button><span id="widget-playback-type">NO SOURCE</span></div>
+          <div class="winamp-radio-entry" id="widget-radio-entry" hidden><label for="widget-radio-url">Direct HTTPS audio stream URL</label><input id="widget-radio-url" type="url" placeholder="https://station.example/stream" autocomplete="off"><button id="widget-radio-play">PLAY STREAM</button></div>
+          <div class="winamp-playlist-title">♫ PLAYLIST <span id="widget-track-count">0 TRACKS</span></div>
+          <ol id="widget-playlist" class="winamp-playlist" aria-label="Audio playlist"><li class="winamp-empty">Add audio files or a radio stream</li></ol>
+          <p class="winamp-note">Radio requires a direct HTTPS MP3/AAC/Ogg stream supported by your browser. Some stations block external playback.</p>
+          <audio id="widget-audio" preload="none"></audio>
+        </div>
+      </section>
+    </aside>
+
     <!-- =====================================================
          TASKBAR
     ====================================================== -->
@@ -1107,6 +1140,9 @@
 })();
 </script>
 <script src="portal.js"></script>
+<script src="retro-widgets.js"></script>
+<script src="project-links.js"></script>
+<script src="properties.js"></script>
 </body>
 
 </html>

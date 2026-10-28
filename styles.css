@@ -1622,3 +1622,129 @@ body.dark-mode .pentagon-menu-toggle:hover {background:#454545;}
 .pentagon-dark .pentagon-floating-content { background:#242030; }
 .pentagon-dark .trade-resource, .pentagon-dark #trade-counter { background:#433b55!important; color:#fff; border-color:#776d8a!important; }
 @media(max-width:600px) { .pentagon-floating .trade-columns { gap:4px; } .pentagon-floating .trade-resource { font-size:10px; padding:2px; } }
+
+/* Luclid-ii embedded portfolio window */
+.luclid-window {min-width:500px;min-height:400px;}
+.luclid-window .window-titlebar{cursor:move;}
+@media(max-width:600px){.luclid-window{min-width:0;width:95vw!important;left:2vw!important;}}
+
+
+/* Retro desktop widgets: separate from the draggable app windows. */
+.retro-widget-stack { position:absolute; right:16px; top:12px; z-index:4; width:258px; display:flex; flex-direction:column; gap:10px; font:12px "MS Sans Serif",Tahoma,Arial,sans-serif; color:#151225; }
+.retro-widget { background:#c6c6d5; border:2px solid; border-color:#fff #383347 #383347 #fff; box-shadow:2px 3px 0 #151122; min-width:0; }
+.retro-widget-title { display:flex; justify-content:space-between; align-items:center; padding:3px 5px; color:white; background:linear-gradient(90deg,#27118b,#7048bd); font-weight:bold; font-size:13px; min-height:25px; text-shadow:1px 1px #201054; }
+.retro-widget-title button { background:#d4d3de; color:#111; border:2px solid; border-color:#fff #555 #555 #fff; font:bold 14px Tahoma; width:20px; height:19px; line-height:12px; cursor:pointer; }
+.retro-widget-body { padding:9px; background:linear-gradient(135deg,#e5e5ed,#b6b4c8); }
+.retro-widget.collapsed .retro-widget-body { display:none; }
+.widget-system { display:grid; grid-template-columns:54px 1fr; gap:7px; }
+.widget-computer { display:flex; justify-content:center; align-items:center; font-size:37px; border-right:1px solid #88839d; }
+.widget-metrics { display:grid; gap:6px; }
+.widget-metrics>div { display:grid; grid-template-columns:49px 46px 1fr; gap:3px; align-items:center; }
+.widget-value { font-size:10px; text-align:right; }
+.widget-track { height:13px; border:2px inset #e8e8e8; background:#11121e; overflow:hidden; }
+.widget-track i { display:block; height:100%; width:0; background:linear-gradient(90deg,#08ac75,#63ffc1); }
+.widget-footnote { grid-column:1/-1; font-size:9px; color:#484057; text-align:center; }
+.widget-network { display:grid; gap:8px; }
+.widget-network>div { display:grid; grid-template-columns:14px 1fr auto; gap:6px; align-items:center; }
+.widget-network strong { color:#165c38; font-weight:normal; font-size:11px; }
+.widget-led { width:11px; height:11px; border:1px solid #26392b; background:#17e56e; border-radius:50%; box-shadow:inset 1px 1px #9dffc6; }
+.widget-led.neutral { background:#a6a4b2; box-shadow:none; border-color:#777; }
+.widget-led.offline { background:#d74747; box-shadow:none; }
+.widget-player { display:flex; gap:8px; align-items:flex-start; }
+.widget-disc { font-size:28px; width:53px; padding-top:7px; border-right:1px solid #8e89a0; }
+.widget-player-main { flex:1; min-width:0; }
+.widget-song { font-weight:bold; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.widget-artist { font-size:10px; margin:3px 0 7px; }
+.widget-file-button { background:#ddd9eb; border:2px outset #fff; font:11px Tahoma; cursor:pointer; padding:2px 5px; max-width:100%; }
+#widget-audio-progress { width:100%; height:11px; accent-color:#5638a5; }
+.widget-player-controls { display:flex; justify-content:center; gap:6px; }
+.widget-player-controls button { min-width:34px; height:23px; background:#d9d7e3; border:2px outset #fff; cursor:pointer; font-size:12px; }
+.widget-player-controls button:disabled { opacity:.55; cursor:default; }
+/* Hide on phones/tablets, including landscape and desktop-site requests. */
+@media(max-width:1050px), (pointer:coarse) { .retro-widget-stack { display:none!important; } }
+
+/* Luclid purple classic audio deck: inspired by 1990s desktop players */
+.retro-widget-stack { width:274px; }
+.winamp-widget { background:#252038; border-color:#a79abc #08050e #08050e #a79abc; }
+.winamp-widget .retro-widget-title { font: bold 11px Tahoma,Arial,sans-serif; letter-spacing:.6px; background:linear-gradient(90deg,#26115e,#6a3da2,#281450); }
+.winamp-body { padding:6px; background:linear-gradient(#403653,#282238); color:#e9e1fc; font:11px Tahoma,Arial,sans-serif; }
+.winamp-screen { display:flex; gap:6px; padding:5px; border:2px inset #8a77a9; background:#0a0912; min-height:60px; }
+.winamp-time { font: bold 22px monospace; color:#73ff91; min-width:65px; text-shadow:0 0 5px #339a50; align-self:center; }
+.winamp-display { flex:1; min-width:0; }
+.winamp-song { font:bold 11px monospace; color:#7fff97; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.winamp-subline { color:#c9a7ff; font:9px monospace; margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.winamp-visual { display:flex; height:21px; align-items:flex-end; gap:3px; margin-top:4px; }
+.winamp-visual i { display:block; width:5px; height:4px; background:linear-gradient(#9dffac,#39935d); }
+.winamp-widget.is-playing .winamp-visual i:nth-child(3n+1) { height:17px; }
+.winamp-widget.is-playing .winamp-visual i:nth-child(3n+2) { height:9px; }
+.winamp-widget.is-playing .winamp-visual i:nth-child(4n) { height:14px; }
+.winamp-body input[type=range] { accent-color:#a57bfc; }
+.winamp-body #widget-audio-progress { display:block; width:100%; height:13px; margin:5px 0; }
+.winamp-controls { display:flex; align-items:center; gap:3px; }
+.winamp-controls button,.winamp-source button,.winamp-radio-entry button { background:#b7a7d5; color:#21132f; border:2px outset #f0eaff; font:bold 10px Tahoma; cursor:pointer; padding:3px 5px; }
+.winamp-controls button { flex:0 0 28px; }
+.winamp-volume { display:flex; align-items:center; gap:3px; font-size:9px; flex:1; min-width:0; }
+.winamp-volume input { width:100%; min-width:0; }
+.winamp-source { display:flex; align-items:center; gap:4px; margin-top:7px; }
+.winamp-source span { font:9px monospace; margin-left:auto; color:#c9b3ed; }
+.winamp-radio-entry { margin-top:7px; padding:5px; border:1px solid #776393; background:#211a33; }
+.winamp-radio-entry[hidden] { display:none; }
+.winamp-radio-entry label { display:block; font-size:10px; margin-bottom:4px; }
+.winamp-radio-entry input { width:100%; box-sizing:border-box; margin-bottom:5px; padding:4px; background:#eae5f6; color:#16121d; border:1px solid #a58fc3; }
+.winamp-playlist-title { display:flex; justify-content:space-between; margin-top:8px; padding:4px; background:#49346d; font-weight:bold; font-size:10px; }
+.winamp-playlist { background:#07090b; color:#70f68e; height:117px; overflow:auto; margin:0; padding:4px 4px 4px 24px; font:11px monospace; }
+.winamp-playlist li { padding:2px 1px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.winamp-playlist li.active { color:#fff; background:#553b85; }
+.winamp-playlist li.winamp-empty { color:#9d90b0; cursor:default; list-style:none; margin-left:-16px; }
+.winamp-note { font:9px/1.35 Tahoma; color:#bdb0d2; margin:5px 0 0; }
+
+/* v0.3.3: truly maximize the embedded Luclid-ii window. */
+.luclid-window.maximized {
+  max-width:none!important; max-height:none!important;
+  min-width:0!important; min-height:0!important;
+  width:100vw!important; height:calc(100vh - 40px)!important;
+  top:0!important; left:0!important;
+  z-index:1000!important;
+}
+.luclid-window.maximized > div:last-child {height:calc(100% - 34px)!important;min-height:0!important;}
+/* Player floats above the taskbar clock, and can be repositioned by dragging its titlebar. */
+.retro-widget-stack {
+  position:fixed; top:auto; bottom:54px; right:14px;
+  left:auto; width:274px; z-index:1001;
+}
+.winamp-widget .retro-widget-title {cursor:move;touch-action:none;user-select:none;}
+.winamp-widget .retro-widget-title button {cursor:pointer;}
+@media(max-width:1050px), (pointer:coarse) { .retro-widget-stack {display:none!important;} }
+
+/* v0.3.4: browser demo windows and desktop widget layering */
+.sftp-window,.luclid-window{box-sizing:border-box;min-width:420px;min-height:320px;}
+.sftp-window .app-frame-wrap,.luclid-window .app-frame-wrap{height:calc(100% - 31px);min-height:0;}
+.sftp-window iframe{width:100%;height:100%;border:0;display:block;background:#262037;}
+.sftp-window.maximized,.luclid-window.maximized{max-width:none!important;max-height:none!important;width:100%!important;height:calc(100% - 42px)!important;min-width:0!important;min-height:0!important;}
+.retro-widget-stack{z-index:25!important;}
+@media(max-width:1050px),(pointer:coarse){.retro-widget-stack{display:none!important;}}
+
+/* Retro application Properties and context menu */
+#retro-properties-menu{position:fixed;z-index:2147483000;background:#c4c4c4;border:2px outset #fff;padding:3px;box-shadow:2px 2px #111;min-width:175px;color:#111;font:13px Tahoma,Arial,sans-serif}
+#retro-properties-menu button{display:block;width:100%;text-align:left;background:transparent;border:0;padding:7px 12px;color:#111;cursor:pointer}
+#retro-properties-menu button:hover,#retro-properties-menu button:focus{background:#54288c;color:white}
+#retro-properties-dialog{position:fixed;z-index:2147483001;width:min(430px,calc(100vw - 30px));left:50%;top:50%;transform:translate(-50%,-50%);background:#c8c8c8;border:3px outset #eee;box-shadow:5px 5px 0 #17101e;color:#181818;font:13px Tahoma,Arial,sans-serif}
+#retro-properties-dialog .prop-title{background:linear-gradient(90deg,#45217b,#8754b4);color:white;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;cursor:move;font-weight:bold;user-select:none}
+#retro-properties-dialog .prop-title button{font-weight:bold;border:2px outset white;background:#ccc;color:#111;cursor:pointer}
+#retro-properties-dialog .prop-body{padding:16px;line-height:1.5}
+#retro-properties-dialog .prop-name{display:flex;gap:13px;align-items:center;border-bottom:1px solid #888;padding-bottom:12px;margin-bottom:12px}
+#retro-properties-dialog .prop-icon{font-size:36px}
+#retro-properties-dialog .prop-desc{background:#f5f5f5;border:2px inset #ddd;padding:11px;margin:10px 0}
+#retro-properties-dialog .prop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
+#retro-properties-dialog .prop-actions a,#retro-properties-dialog .prop-actions button{padding:6px 12px;border:2px outset #eee;background:#d6c3e9;color:#211036;text-decoration:none;cursor:pointer;font:inherit}
+#retro-properties-dialog .prop-actions a:hover{background:#a77cce}
+
+/* Project Properties: unified retro light/dark theme */
+#retro-properties-dialog,#retro-properties-menu{--prop-bg:#c8c8c8;--prop-text:#181818;--prop-panel:#f5f5f5;--prop-border:#eee;--prop-button:#d6c3e9;background:var(--prop-bg);color:var(--prop-text)}
+body.dark-mode #retro-properties-dialog,body.dark-mode #retro-properties-menu{--prop-bg:#2b2435;--prop-text:#f5ebff;--prop-panel:#211b2b;--prop-border:#655675;--prop-button:#51366c}
+#retro-properties-dialog{border-color:var(--prop-border)}
+#retro-properties-dialog .prop-name{border-color:var(--prop-border)}
+#retro-properties-dialog .prop-desc{background:var(--prop-panel);color:var(--prop-text);border-color:var(--prop-border)}
+#retro-properties-dialog .prop-title button,#retro-properties-dialog .prop-actions a,#retro-properties-dialog .prop-actions button{background:var(--prop-button);color:var(--prop-text);border-color:var(--prop-border)}
+#retro-properties-menu button{color:var(--prop-text)}
+#retro-properties-menu button:hover{color:#fff}
